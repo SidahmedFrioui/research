@@ -19,24 +19,22 @@ import {
   DropdownMenuTrigger 
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
-import { useGetUser } from "#/features/auth/profile/hooks/use-get-user";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
+import { useAuth } from "#/contexts/auth";
 
 export default function Header() {
   const router = useRouter();
   const [isOpen, setIsOpen] = useState(false);
-  
-  const isLoggedIn = typeof window !== 'undefined' && !!localStorage.getItem("token");
 
   const navItems = [
     { name: 'Articles', href: '/articles' },
     { name: 'À propos', href: '/about' },
   ];
 
-  const { data: user } = useGetUser();
+  const { user, logout, isAuthenticated: isLoggedIn } = useAuth();
 
   const handleLogout = () => {
-    localStorage.removeItem("token");
+    logout();
     router.navigate({ to: '/auth/sign-in' });
   };
 

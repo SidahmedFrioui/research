@@ -33,7 +33,7 @@ export function useLogin() {
       queryClient.invalidateQueries({
         queryKey: ['user']
       });
-      location.href = '/dashboard'
+      location.href = '/'
     },
   });
 }

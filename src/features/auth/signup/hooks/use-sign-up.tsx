@@ -36,7 +36,7 @@ export function useSignUp() {
             queryClient.invalidateQueries({
                 queryKey: ['user']
             });
-            location.href = '/dashboard';
+            location.href = '/';
         },
     });
 }

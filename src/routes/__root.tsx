@@ -1,46 +1,70 @@
+import * as React from 'react'
 import {
   HeadContent,
   Scripts,
   createRootRouteWithContext,
+  Outlet,
+  useRouter,
 } from '@tanstack/react-router'
 import { TanStackRouterDevtoolsPanel } from '@tanstack/react-router-devtools'
 import { TanStackDevtools } from '@tanstack/react-devtools'
 import Header from '../components/Header'
-
-import TanStackQueryDevtools from '../integrations/tanstack-query/devtools'
-
-import appCss from '../styles.css?url'
-
-import type { QueryClient } from '@tanstack/react-query'
 import Footer from '#/components/Footer'
+import { Toaster } from '#/components/ui/toaster'
+import TanStackQueryDevtools from '../integrations/tanstack-query/devtools'
+import appCss from '../styles.css?url'
+import type { QueryClient } from '@tanstack/react-query'
+import { AuthProvider, useAuth } from '#/contexts/auth'
+import type { User } from '#/types/user'
 
 interface MyRouterContext {
   queryClient: QueryClient
+  auth: {
+    isAuthenticated: boolean
+    user: User | null
+    isPending: boolean
+  }
 }
 
 export const Route = createRootRouteWithContext<MyRouterContext>()({
   head: () => ({
     meta: [
-      {
-        charSet: 'utf-8',
-      },
-      {
-        name: 'viewport',
-        content: 'width=device-width, initial-scale=1',
-      },
-      {
-        title: 'Sciflow',
-      },
+      { charSet: 'utf-8' },
+      { name: 'viewport', content: 'width=device-width, initial-scale=1' },
+      { title: 'Sciflow' },
     ],
-    links: [
-      {
-        rel: 'stylesheet',
-        href: appCss,
-      },
-    ],
+    links: [{ rel: 'stylesheet', href: appCss }],
   }),
-  shellComponent: RootDocument,
+  component: RootLayout,
 })
+
+function RootLayout() {
+  return (
+    <AuthProvider>
+      <AuthRouterSync />
+    </AuthProvider>
+  )
+}
+
+function AuthRouterSync() {
+  const auth = useAuth()
+  const router = useRouter()
+
+  React.useEffect(() => {
+    router.update({
+      context: {
+        ...router.options.context,
+        auth,
+      },
+    })
+  }, [auth, router])
+
+  return (
+    <RootDocument>
+      <Outlet />
+    </RootDocument>
+  )
+}
 
 function RootDocument({ children }: { children: React.ReactNode }) {
   return (
@@ -51,11 +75,8 @@ function RootDocument({ children }: { children: React.ReactNode }) {
       <body className="font-sans antialiased [overflow-wrap:anywhere]">
         <Header />
         {children}
-        {/* <Footer /> */}
         <TanStackDevtools
-          config={{
-            position: 'bottom-right',
-          }}
+          config={{ position: 'bottom-right' }}
           plugins={[
             {
               name: 'Tanstack Router',
@@ -66,6 +87,7 @@ function RootDocument({ children }: { children: React.ReactNode }) {
         />
         <Scripts />
         <Footer />
+        <Toaster />
       </body>
     </html>
   )

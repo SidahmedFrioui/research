@@ -1,9 +1,20 @@
-import { createFileRoute } from '@tanstack/react-router'
+import { Users } from '#/features/dashboard/users'
+import { createFileRoute, redirect } from '@tanstack/react-router'
 
 export const Route = createFileRoute('/dashboard/manage/users')({
-  component: RouteComponent,
+  beforeLoad: ({ context, location }) => {
+      if (context.auth?.isPending) {
+        return
+      }
+  
+      if (!context.auth?.isAuthenticated) {
+        throw redirect({
+          to: '/auth/sign-in',
+          search: {
+            redirect: location.pathname,
+          },
+        })
+      }
+    },
+  component: Users,
 })
-
-function RouteComponent() {
-  return <div>Hello "/dashboard/manage/users"!</div>
-}

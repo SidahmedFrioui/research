@@ -15,12 +15,12 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
-import { useGetUser } from "./hooks/use-get-user";
 import { useEditUser } from "./hooks/use-update-user";
 import type { User } from "#/types/user";
+import { useAuth } from "#/contexts/auth";
 
 export const Profile = () => {
-  const { data: user, isPending: isLoadingUser } = useGetUser();
+  const { user, isPending: isLoadingUser } = useAuth();
   const { mutate: updateUser, isPending: isUpdating } = useEditUser();
 
   const { register, handleSubmit, reset } = useForm({
@@ -44,7 +44,7 @@ export const Profile = () => {
   }, [user, reset]);
 
   const onSubmit = (formData: Partial<User>) => {
-    updateUser({ data: formData, id: user?.id || "" });
+    updateUser({ data: formData, id: user?.id || 0 });
   };
 
   if (isLoadingUser) {

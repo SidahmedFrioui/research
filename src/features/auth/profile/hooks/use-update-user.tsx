@@ -11,7 +11,7 @@ export function useEditUser() {
     const { toast } = useToast();
   
     return useMutation({
-      mutationFn: async (data: { data: UserUpdateRequest, id: string }): Promise<any> => {
+      mutationFn: async (data: { data: UserUpdateRequest, id: number }): Promise<any> => {
         return await apiClient.put<UserUpdateRequest, UserUpdateRequest>(`/users/${data.id}`, data.data);
       },
       onSuccess: () => {

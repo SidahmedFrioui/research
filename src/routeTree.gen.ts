@@ -15,16 +15,19 @@ import { Route as AboutRouteImport } from './routes/about'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as DashboardIndexRouteImport } from './routes/dashboard/index'
 import { Route as ArticlesIndexRouteImport } from './routes/articles/index'
+import { Route as DashboardSubmitDecisionRouteImport } from './routes/dashboard/submit-decision'
 import { Route as DashboardSubmitRouteImport } from './routes/dashboard/submit'
 import { Route as DashboardReviewsRouteImport } from './routes/dashboard/reviews'
+import { Route as DashboardMyReviewsRouteImport } from './routes/dashboard/my-reviews'
 import { Route as DashboardMyArticlesRouteImport } from './routes/dashboard/my-articles'
+import { Route as DashboardEthicalGuideRouteImport } from './routes/dashboard/ethical-guide'
+import { Route as DashboardAssignedArticlesRouteImport } from './routes/dashboard/assigned-articles'
 import { Route as AuthSignUpRouteImport } from './routes/auth/sign-up'
 import { Route as AuthSignInRouteImport } from './routes/auth/sign-in'
 import { Route as AuthProfileRouteImport } from './routes/auth/profile'
 import { Route as ArticlesArticleIdRouteImport } from './routes/articles/$articleId'
 import { Route as DashboardManageUsersRouteImport } from './routes/dashboard/manage/users'
-import { Route as DashboardManageArticlesRouteImport } from './routes/dashboard/manage/articles'
-import { Route as DashboardArticlesArticleIdRouteImport } from './routes/dashboard/articles/$articleId'
+import { Route as DashboardArticlesArticlesRouteImport } from './routes/dashboard/articles/articles'
 
 const TermsRoute = TermsRouteImport.update({
   id: '/terms',
@@ -56,6 +59,11 @@ const ArticlesIndexRoute = ArticlesIndexRouteImport.update({
   path: '/articles/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const DashboardSubmitDecisionRoute = DashboardSubmitDecisionRouteImport.update({
+  id: '/dashboard/submit-decision',
+  path: '/dashboard/submit-decision',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const DashboardSubmitRoute = DashboardSubmitRouteImport.update({
   id: '/dashboard/submit',
   path: '/dashboard/submit',
@@ -66,11 +74,27 @@ const DashboardReviewsRoute = DashboardReviewsRouteImport.update({
   path: '/dashboard/reviews',
   getParentRoute: () => rootRouteImport,
 } as any)
+const DashboardMyReviewsRoute = DashboardMyReviewsRouteImport.update({
+  id: '/dashboard/my-reviews',
+  path: '/dashboard/my-reviews',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const DashboardMyArticlesRoute = DashboardMyArticlesRouteImport.update({
   id: '/dashboard/my-articles',
   path: '/dashboard/my-articles',
   getParentRoute: () => rootRouteImport,
 } as any)
+const DashboardEthicalGuideRoute = DashboardEthicalGuideRouteImport.update({
+  id: '/dashboard/ethical-guide',
+  path: '/dashboard/ethical-guide',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DashboardAssignedArticlesRoute =
+  DashboardAssignedArticlesRouteImport.update({
+    id: '/dashboard/assigned-articles',
+    path: '/dashboard/assigned-articles',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const AuthSignUpRoute = AuthSignUpRouteImport.update({
   id: '/auth/sign-up',
   path: '/auth/sign-up',
@@ -96,15 +120,10 @@ const DashboardManageUsersRoute = DashboardManageUsersRouteImport.update({
   path: '/dashboard/manage/users',
   getParentRoute: () => rootRouteImport,
 } as any)
-const DashboardManageArticlesRoute = DashboardManageArticlesRouteImport.update({
-  id: '/dashboard/manage/articles',
-  path: '/dashboard/manage/articles',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const DashboardArticlesArticleIdRoute =
-  DashboardArticlesArticleIdRouteImport.update({
-    id: '/dashboard/articles/$articleId',
-    path: '/dashboard/articles/$articleId',
+const DashboardArticlesArticlesRoute =
+  DashboardArticlesArticlesRouteImport.update({
+    id: '/dashboard/articles/articles',
+    path: '/dashboard/articles/articles',
     getParentRoute: () => rootRouteImport,
   } as any)
 
@@ -117,13 +136,16 @@ export interface FileRoutesByFullPath {
   '/auth/profile': typeof AuthProfileRoute
   '/auth/sign-in': typeof AuthSignInRoute
   '/auth/sign-up': typeof AuthSignUpRoute
+  '/dashboard/assigned-articles': typeof DashboardAssignedArticlesRoute
+  '/dashboard/ethical-guide': typeof DashboardEthicalGuideRoute
   '/dashboard/my-articles': typeof DashboardMyArticlesRoute
+  '/dashboard/my-reviews': typeof DashboardMyReviewsRoute
   '/dashboard/reviews': typeof DashboardReviewsRoute
   '/dashboard/submit': typeof DashboardSubmitRoute
+  '/dashboard/submit-decision': typeof DashboardSubmitDecisionRoute
   '/articles/': typeof ArticlesIndexRoute
   '/dashboard/': typeof DashboardIndexRoute
-  '/dashboard/articles/$articleId': typeof DashboardArticlesArticleIdRoute
-  '/dashboard/manage/articles': typeof DashboardManageArticlesRoute
+  '/dashboard/articles/articles': typeof DashboardArticlesArticlesRoute
   '/dashboard/manage/users': typeof DashboardManageUsersRoute
 }
 export interface FileRoutesByTo {
@@ -135,13 +157,16 @@ export interface FileRoutesByTo {
   '/auth/profile': typeof AuthProfileRoute
   '/auth/sign-in': typeof AuthSignInRoute
   '/auth/sign-up': typeof AuthSignUpRoute
+  '/dashboard/assigned-articles': typeof DashboardAssignedArticlesRoute
+  '/dashboard/ethical-guide': typeof DashboardEthicalGuideRoute
   '/dashboard/my-articles': typeof DashboardMyArticlesRoute
+  '/dashboard/my-reviews': typeof DashboardMyReviewsRoute
   '/dashboard/reviews': typeof DashboardReviewsRoute
   '/dashboard/submit': typeof DashboardSubmitRoute
+  '/dashboard/submit-decision': typeof DashboardSubmitDecisionRoute
   '/articles': typeof ArticlesIndexRoute
   '/dashboard': typeof DashboardIndexRoute
-  '/dashboard/articles/$articleId': typeof DashboardArticlesArticleIdRoute
-  '/dashboard/manage/articles': typeof DashboardManageArticlesRoute
+  '/dashboard/articles/articles': typeof DashboardArticlesArticlesRoute
   '/dashboard/manage/users': typeof DashboardManageUsersRoute
 }
 export interface FileRoutesById {
@@ -154,13 +179,16 @@ export interface FileRoutesById {
   '/auth/profile': typeof AuthProfileRoute
   '/auth/sign-in': typeof AuthSignInRoute
   '/auth/sign-up': typeof AuthSignUpRoute
+  '/dashboard/assigned-articles': typeof DashboardAssignedArticlesRoute
+  '/dashboard/ethical-guide': typeof DashboardEthicalGuideRoute
   '/dashboard/my-articles': typeof DashboardMyArticlesRoute
+  '/dashboard/my-reviews': typeof DashboardMyReviewsRoute
   '/dashboard/reviews': typeof DashboardReviewsRoute
   '/dashboard/submit': typeof DashboardSubmitRoute
+  '/dashboard/submit-decision': typeof DashboardSubmitDecisionRoute
   '/articles/': typeof ArticlesIndexRoute
   '/dashboard/': typeof DashboardIndexRoute
-  '/dashboard/articles/$articleId': typeof DashboardArticlesArticleIdRoute
-  '/dashboard/manage/articles': typeof DashboardManageArticlesRoute
+  '/dashboard/articles/articles': typeof DashboardArticlesArticlesRoute
   '/dashboard/manage/users': typeof DashboardManageUsersRoute
 }
 export interface FileRouteTypes {
@@ -174,13 +202,16 @@ export interface FileRouteTypes {
     | '/auth/profile'
     | '/auth/sign-in'
     | '/auth/sign-up'
+    | '/dashboard/assigned-articles'
+    | '/dashboard/ethical-guide'
     | '/dashboard/my-articles'
+    | '/dashboard/my-reviews'
     | '/dashboard/reviews'
     | '/dashboard/submit'
+    | '/dashboard/submit-decision'
     | '/articles/'
     | '/dashboard/'
-    | '/dashboard/articles/$articleId'
-    | '/dashboard/manage/articles'
+    | '/dashboard/articles/articles'
     | '/dashboard/manage/users'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -192,13 +223,16 @@ export interface FileRouteTypes {
     | '/auth/profile'
     | '/auth/sign-in'
     | '/auth/sign-up'
+    | '/dashboard/assigned-articles'
+    | '/dashboard/ethical-guide'
     | '/dashboard/my-articles'
+    | '/dashboard/my-reviews'
     | '/dashboard/reviews'
     | '/dashboard/submit'
+    | '/dashboard/submit-decision'
     | '/articles'
     | '/dashboard'
-    | '/dashboard/articles/$articleId'
-    | '/dashboard/manage/articles'
+    | '/dashboard/articles/articles'
     | '/dashboard/manage/users'
   id:
     | '__root__'
@@ -210,13 +244,16 @@ export interface FileRouteTypes {
     | '/auth/profile'
     | '/auth/sign-in'
     | '/auth/sign-up'
+    | '/dashboard/assigned-articles'
+    | '/dashboard/ethical-guide'
     | '/dashboard/my-articles'
+    | '/dashboard/my-reviews'
     | '/dashboard/reviews'
     | '/dashboard/submit'
+    | '/dashboard/submit-decision'
     | '/articles/'
     | '/dashboard/'
-    | '/dashboard/articles/$articleId'
-    | '/dashboard/manage/articles'
+    | '/dashboard/articles/articles'
     | '/dashboard/manage/users'
   fileRoutesById: FileRoutesById
 }
@@ -229,13 +266,16 @@ export interface RootRouteChildren {
   AuthProfileRoute: typeof AuthProfileRoute
   AuthSignInRoute: typeof AuthSignInRoute
   AuthSignUpRoute: typeof AuthSignUpRoute
+  DashboardAssignedArticlesRoute: typeof DashboardAssignedArticlesRoute
+  DashboardEthicalGuideRoute: typeof DashboardEthicalGuideRoute
   DashboardMyArticlesRoute: typeof DashboardMyArticlesRoute
+  DashboardMyReviewsRoute: typeof DashboardMyReviewsRoute
   DashboardReviewsRoute: typeof DashboardReviewsRoute
   DashboardSubmitRoute: typeof DashboardSubmitRoute
+  DashboardSubmitDecisionRoute: typeof DashboardSubmitDecisionRoute
   ArticlesIndexRoute: typeof ArticlesIndexRoute
   DashboardIndexRoute: typeof DashboardIndexRoute
-  DashboardArticlesArticleIdRoute: typeof DashboardArticlesArticleIdRoute
-  DashboardManageArticlesRoute: typeof DashboardManageArticlesRoute
+  DashboardArticlesArticlesRoute: typeof DashboardArticlesArticlesRoute
   DashboardManageUsersRoute: typeof DashboardManageUsersRoute
 }
 
@@ -283,6 +323,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ArticlesIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/dashboard/submit-decision': {
+      id: '/dashboard/submit-decision'
+      path: '/dashboard/submit-decision'
+      fullPath: '/dashboard/submit-decision'
+      preLoaderRoute: typeof DashboardSubmitDecisionRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/dashboard/submit': {
       id: '/dashboard/submit'
       path: '/dashboard/submit'
@@ -297,11 +344,32 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DashboardReviewsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/dashboard/my-reviews': {
+      id: '/dashboard/my-reviews'
+      path: '/dashboard/my-reviews'
+      fullPath: '/dashboard/my-reviews'
+      preLoaderRoute: typeof DashboardMyReviewsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/dashboard/my-articles': {
       id: '/dashboard/my-articles'
       path: '/dashboard/my-articles'
       fullPath: '/dashboard/my-articles'
       preLoaderRoute: typeof DashboardMyArticlesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/dashboard/ethical-guide': {
+      id: '/dashboard/ethical-guide'
+      path: '/dashboard/ethical-guide'
+      fullPath: '/dashboard/ethical-guide'
+      preLoaderRoute: typeof DashboardEthicalGuideRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/dashboard/assigned-articles': {
+      id: '/dashboard/assigned-articles'
+      path: '/dashboard/assigned-articles'
+      fullPath: '/dashboard/assigned-articles'
+      preLoaderRoute: typeof DashboardAssignedArticlesRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/auth/sign-up': {
@@ -339,18 +407,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DashboardManageUsersRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/dashboard/manage/articles': {
-      id: '/dashboard/manage/articles'
-      path: '/dashboard/manage/articles'
-      fullPath: '/dashboard/manage/articles'
-      preLoaderRoute: typeof DashboardManageArticlesRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/dashboard/articles/$articleId': {
-      id: '/dashboard/articles/$articleId'
-      path: '/dashboard/articles/$articleId'
-      fullPath: '/dashboard/articles/$articleId'
-      preLoaderRoute: typeof DashboardArticlesArticleIdRouteImport
+    '/dashboard/articles/articles': {
+      id: '/dashboard/articles/articles'
+      path: '/dashboard/articles/articles'
+      fullPath: '/dashboard/articles/articles'
+      preLoaderRoute: typeof DashboardArticlesArticlesRouteImport
       parentRoute: typeof rootRouteImport
     }
   }
@@ -365,13 +426,16 @@ const rootRouteChildren: RootRouteChildren = {
   AuthProfileRoute: AuthProfileRoute,
   AuthSignInRoute: AuthSignInRoute,
   AuthSignUpRoute: AuthSignUpRoute,
+  DashboardAssignedArticlesRoute: DashboardAssignedArticlesRoute,
+  DashboardEthicalGuideRoute: DashboardEthicalGuideRoute,
   DashboardMyArticlesRoute: DashboardMyArticlesRoute,
+  DashboardMyReviewsRoute: DashboardMyReviewsRoute,
   DashboardReviewsRoute: DashboardReviewsRoute,
   DashboardSubmitRoute: DashboardSubmitRoute,
+  DashboardSubmitDecisionRoute: DashboardSubmitDecisionRoute,
   ArticlesIndexRoute: ArticlesIndexRoute,
   DashboardIndexRoute: DashboardIndexRoute,
-  DashboardArticlesArticleIdRoute: DashboardArticlesArticleIdRoute,
-  DashboardManageArticlesRoute: DashboardManageArticlesRoute,
+  DashboardArticlesArticlesRoute: DashboardArticlesArticlesRoute,
   DashboardManageUsersRoute: DashboardManageUsersRoute,
 }
 export const routeTree = rootRouteImport
