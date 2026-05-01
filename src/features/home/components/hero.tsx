@@ -1,6 +1,9 @@
 import { FileUp, Search } from "lucide-react"
+import { useRouter } from "@tanstack/react-router"
 
 export const Hero = () => {
+    const router = useRouter();
+
     return (
         <section className="relative px-6 pt-16 pb-24 max-w-7xl mx-auto text-center">
             <div className="inline-flex items-center gap-2 bg-indigo-50 border border-indigo-100 px-4 py-1.5 rounded-full mb-8">
@@ -22,10 +25,10 @@ export const Hero = () => {
             </p>
 
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <button className="cursor-pointer bg-indigo-600 text-white px-8 py-4 rounded-2xl font-bold flex items-center justify-center gap-2 hover:bg-indigo-700 transition-all shadow-xl shadow-indigo-200">
+            <button onClick={() => router.navigate({ to: '/dashboard/submit' })} className="cursor-pointer bg-indigo-600 text-white px-8 py-4 rounded-2xl font-bold flex items-center justify-center gap-2 hover:bg-indigo-700 transition-all shadow-xl shadow-indigo-200">
                 Soumettre un article <FileUp size={20} />
             </button>
-            <button className="cursor-pointer bg-white border border-slate-200 text-slate-700 px-8 py-4 rounded-2xl font-bold flex items-center justify-center gap-2 hover:bg-slate-50 transition-all">
+            <button onClick={() => router.navigate({ to: '/articles' })} className="cursor-pointer bg-white border border-slate-200 text-slate-700 px-8 py-4 rounded-2xl font-bold flex items-center justify-center gap-2 hover:bg-slate-50 transition-all">
                 Consulter les archives <Search size={20} />
             </button>
             </div>

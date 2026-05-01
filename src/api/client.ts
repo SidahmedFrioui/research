@@ -10,9 +10,7 @@ export interface PaginatedResponse<T> {
   total: string;
 }
 
-export interface Response<T> {
-  data: T;
-}
+export type Response<T> = T;
 
 api.interceptors.request.use((config) => {
   const token = localStorage.getItem("token");

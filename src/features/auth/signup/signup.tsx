@@ -1,4 +1,5 @@
-import { Mail, Lock, User, Image as Briefcase, BookOpen, ArrowRight } from 'lucide-react';
+import { useForm } from 'react-hook-form';
+import { Mail, Lock, UserIcon, Image as Briefcase, BookOpen, ArrowRight, Loader2 } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -11,15 +12,34 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Link } from '@tanstack/react-router';
+import { useSignUp, type SignUpData } from './hooks/use-sign-up';
+import type { Role } from '@/types/user';
 
 export const SignUp = () => {
+  const { mutateAsync, isPending } = useSignUp();
+  
+  const { register, handleSubmit, setValue, watch } = useForm({
+    defaultValues: {
+      name: '',
+      email: '',
+      password: '',
+      role: 'author' as Role,
+      profile_picture: 'https://github.com/shadcn.png'
+    }
+  });
+
+  const selectedRole = watch('role');
+
+  const onSubmit = async (data: SignUpData) => {
+    await mutateAsync(data);
+  };
+
   return (
     <div className="min-h-screen flex items-center justify-center bg-slate-50 p-4 py-12 selection:bg-indigo-100">
       <Card className="gap-0 w-full max-w-6xl rounded-[32px] overflow-hidden shadow-2xl border-none flex flex-col md:flex-row min-h-[750px] py-0">
         
-        {/* Visual Side (Left) */}
+        {/* Visual Side (Left) - Unchanged */}
         <div className="md:w-1/2 bg-gradient-to-br from-indigo-600 via-indigo-700 to-violet-800 p-12 text-white flex flex-col justify-between relative overflow-hidden">
-          {/* Subtle Decorative Circles */}
           <div className="absolute -top-24 -left-24 w-64 h-64 bg-white/10 rounded-full blur-3xl" />
           <div className="absolute -bottom-24 -right-24 w-64 h-64 bg-indigo-500/20 rounded-full blur-3xl" />
           
@@ -45,7 +65,7 @@ export const SignUp = () => {
               "SciFlow a transformé notre flux de travail. La transparence du cycle de vie des articles est un atout majeur pour nos chercheurs."
             </p>
             <div className="mt-6 flex items-center gap-3">
-              <div className="h-10 w-10 rounded-full bg-indigo-400/30 border border-white/20" />
+              <img src="/woman.webp" alt="Profile" className="h-10 w-10 rounded-full object-cover" />
               <div>
                 <p className="font-bold text-sm text-white">Dr. Sarah Chen</p>
                 <p className="text-xs text-indigo-200/70 uppercase tracking-widest font-semibold">Directrice de recherche, MIT</p>
@@ -62,13 +82,18 @@ export const SignUp = () => {
               <p className="text-slate-500 mt-2 font-medium">Remplissez les détails pour rejoindre la plateforme.</p>
             </div>
             
-            <form className="grid grid-cols-1 md:grid-cols-2 gap-5" onSubmit={(e) => e.preventDefault()}>
+            <form className="grid grid-cols-1 md:grid-cols-2 gap-5" onSubmit={handleSubmit(onSubmit)}>
               {/* Full Name */}
               <div className="md:col-span-2 space-y-2">
                 <Label htmlFor="name" className="text-slate-700 font-bold ml-1">Nom complet</Label>
                 <div className="relative group">
-                  <User className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-indigo-600 transition-colors" size={18} />
-                  <Input id="name" placeholder="Dr. Jean Dupont" className="pl-11 h-12 rounded-2xl bg-slate-50/50 border-slate-200 focus-visible:ring-indigo-500" />
+                  <UserIcon className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-indigo-600 transition-colors" size={18} />
+                  <Input 
+                    {...register('name', { required: true })}
+                    id="name" 
+                    placeholder="Dr. Jean Dupont" 
+                    className="pl-11 h-12 rounded-2xl bg-slate-50/50 border-slate-200 focus-visible:ring-indigo-500" 
+                  />
                 </div>
               </div>
 
@@ -77,7 +102,13 @@ export const SignUp = () => {
                 <Label htmlFor="email" className="text-slate-700 font-bold ml-1">Email institutionnel</Label>
                 <div className="relative group">
                   <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-indigo-600 transition-colors" size={18} />
-                  <Input id="email" type="email" placeholder="jean.dupont@universite.fr" className="pl-11 h-12 rounded-2xl bg-slate-50/50 border-slate-200 focus-visible:ring-indigo-500" />
+                  <Input 
+                    {...register('email', { required: true })}
+                    id="email" 
+                    type="email" 
+                    placeholder="jean.dupont@universite.fr" 
+                    className="pl-11 h-12 rounded-2xl bg-slate-50/50 border-slate-200 focus-visible:ring-indigo-500" 
+                  />
                 </div>
               </div>
 
@@ -86,14 +117,23 @@ export const SignUp = () => {
                 <Label htmlFor="pass" className="text-slate-700 font-bold ml-1">Mot de passe</Label>
                 <div className="relative group">
                   <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-indigo-600 transition-colors" size={18} />
-                  <Input id="pass" type="password" placeholder="••••••••" className="pl-11 h-12 rounded-2xl bg-slate-50 border-slate-200 focus-visible:ring-indigo-500" />
+                  <Input 
+                    {...register('password', { required: true })}
+                    id="pass" 
+                    type="password" 
+                    placeholder="••••••••" 
+                    className="pl-11 h-12 rounded-2xl bg-slate-50 border-slate-200 focus-visible:ring-indigo-500" 
+                  />
                 </div>
               </div>
 
               {/* Role Select */}
               <div className="md:col-span-1 space-y-2">
                 <Label htmlFor="role" className="text-slate-700 font-bold ml-1">Rôle</Label>
-                <Select defaultValue="author">
+                <Select 
+                  value={selectedRole} 
+                  onValueChange={(value) => setValue('role', value as Role)}
+                >
                   <SelectTrigger className="text-gray-900 py-4 h-12 rounded-2xl bg-slate-50/50 border-slate-200 focus:ring-indigo-500 w-full">
                     <SelectValue placeholder="Choisir un rôle" />
                   </SelectTrigger>
@@ -106,7 +146,7 @@ export const SignUp = () => {
                 </Select>
               </div>
 
-              {/* Background/Bio */}
+              {/* Background/Bio - Note: Map this to your schema if needed */}
               <div className="md:col-span-2 space-y-2">
                 <Label htmlFor="bg" className="text-slate-700 font-bold ml-1">Parcours académique</Label>
                 <div className="relative group">
@@ -115,9 +155,19 @@ export const SignUp = () => {
                 </div>
               </div>
 
-              <Button className="md:col-span-2 mt-4 h-12 rounded-2xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-base transition-all shadow-xl shadow-indigo-100 group">
-                S'inscrire maintenant
-                <ArrowRight size={18} className="ml-2 group-hover:translate-x-1 transition-transform" />
+              <Button 
+                type="submit"
+                disabled={isPending}
+                className="md:col-span-2 mt-4 h-12 rounded-2xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-base transition-all shadow-xl shadow-indigo-100 group"
+              >
+                {isPending ? (
+                  <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+                ) : (
+                  <>
+                    S'inscrire maintenant
+                    <ArrowRight size={18} className="ml-2 group-hover:translate-x-1 transition-transform" />
+                  </>
+                )}
               </Button>
             </form>
             

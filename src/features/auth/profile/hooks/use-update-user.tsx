@@ -1,21 +1,18 @@
 import { useQueryClient } from "@tanstack/react-query";
-import { useToast } from "../use-toast";
+import { useToast } from "@/hooks/use-toast";
 import { useMutation } from "@tanstack/react-query";
 import { apiClient } from "@/api/client";
-import { useUserStore } from "@/store/user";
+import type { User } from "@/types/user";
 
-type UserUpdateRequest = {
-    full_name: string
-}
+type UserUpdateRequest = Partial<User>;
 
 export function useEditUser() {
     const queryClient = useQueryClient();
     const { toast } = useToast();
-    const { user } = useUserStore();
   
     return useMutation({
-      mutationFn: async (data: UserUpdateRequest): Promise<any> => {
-        return await apiClient.put<UserUpdateRequest, UserUpdateRequest>(`/users/${user?.entreprise.id}/${user?.user.id}`, data);
+      mutationFn: async (data: { data: UserUpdateRequest, id: string }): Promise<any> => {
+        return await apiClient.put<UserUpdateRequest, UserUpdateRequest>(`/users/${data.id}`, data.data);
       },
       onSuccess: () => {
         toast({

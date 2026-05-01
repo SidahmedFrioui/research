@@ -13,11 +13,11 @@ import { Route as TermsRouteImport } from './routes/terms'
 import { Route as PrivacyPolicyRouteImport } from './routes/privacy-policy'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as DashboardIndexRouteImport } from './routes/dashboard/index'
 import { Route as ArticlesIndexRouteImport } from './routes/articles/index'
 import { Route as DashboardSubmitRouteImport } from './routes/dashboard/submit'
 import { Route as DashboardReviewsRouteImport } from './routes/dashboard/reviews'
 import { Route as DashboardMyArticlesRouteImport } from './routes/dashboard/my-articles'
-import { Route as DashboardMainRouteImport } from './routes/dashboard/main'
 import { Route as AuthSignUpRouteImport } from './routes/auth/sign-up'
 import { Route as AuthSignInRouteImport } from './routes/auth/sign-in'
 import { Route as AuthProfileRouteImport } from './routes/auth/profile'
@@ -46,6 +46,11 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const DashboardIndexRoute = DashboardIndexRouteImport.update({
+  id: '/dashboard/',
+  path: '/dashboard/',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ArticlesIndexRoute = ArticlesIndexRouteImport.update({
   id: '/articles/',
   path: '/articles/',
@@ -64,11 +69,6 @@ const DashboardReviewsRoute = DashboardReviewsRouteImport.update({
 const DashboardMyArticlesRoute = DashboardMyArticlesRouteImport.update({
   id: '/dashboard/my-articles',
   path: '/dashboard/my-articles',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const DashboardMainRoute = DashboardMainRouteImport.update({
-  id: '/dashboard/main',
-  path: '/dashboard/main',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthSignUpRoute = AuthSignUpRouteImport.update({
@@ -117,11 +117,11 @@ export interface FileRoutesByFullPath {
   '/auth/profile': typeof AuthProfileRoute
   '/auth/sign-in': typeof AuthSignInRoute
   '/auth/sign-up': typeof AuthSignUpRoute
-  '/dashboard/main': typeof DashboardMainRoute
   '/dashboard/my-articles': typeof DashboardMyArticlesRoute
   '/dashboard/reviews': typeof DashboardReviewsRoute
   '/dashboard/submit': typeof DashboardSubmitRoute
   '/articles/': typeof ArticlesIndexRoute
+  '/dashboard/': typeof DashboardIndexRoute
   '/dashboard/articles/$articleId': typeof DashboardArticlesArticleIdRoute
   '/dashboard/manage/articles': typeof DashboardManageArticlesRoute
   '/dashboard/manage/users': typeof DashboardManageUsersRoute
@@ -135,11 +135,11 @@ export interface FileRoutesByTo {
   '/auth/profile': typeof AuthProfileRoute
   '/auth/sign-in': typeof AuthSignInRoute
   '/auth/sign-up': typeof AuthSignUpRoute
-  '/dashboard/main': typeof DashboardMainRoute
   '/dashboard/my-articles': typeof DashboardMyArticlesRoute
   '/dashboard/reviews': typeof DashboardReviewsRoute
   '/dashboard/submit': typeof DashboardSubmitRoute
   '/articles': typeof ArticlesIndexRoute
+  '/dashboard': typeof DashboardIndexRoute
   '/dashboard/articles/$articleId': typeof DashboardArticlesArticleIdRoute
   '/dashboard/manage/articles': typeof DashboardManageArticlesRoute
   '/dashboard/manage/users': typeof DashboardManageUsersRoute
@@ -154,11 +154,11 @@ export interface FileRoutesById {
   '/auth/profile': typeof AuthProfileRoute
   '/auth/sign-in': typeof AuthSignInRoute
   '/auth/sign-up': typeof AuthSignUpRoute
-  '/dashboard/main': typeof DashboardMainRoute
   '/dashboard/my-articles': typeof DashboardMyArticlesRoute
   '/dashboard/reviews': typeof DashboardReviewsRoute
   '/dashboard/submit': typeof DashboardSubmitRoute
   '/articles/': typeof ArticlesIndexRoute
+  '/dashboard/': typeof DashboardIndexRoute
   '/dashboard/articles/$articleId': typeof DashboardArticlesArticleIdRoute
   '/dashboard/manage/articles': typeof DashboardManageArticlesRoute
   '/dashboard/manage/users': typeof DashboardManageUsersRoute
@@ -174,11 +174,11 @@ export interface FileRouteTypes {
     | '/auth/profile'
     | '/auth/sign-in'
     | '/auth/sign-up'
-    | '/dashboard/main'
     | '/dashboard/my-articles'
     | '/dashboard/reviews'
     | '/dashboard/submit'
     | '/articles/'
+    | '/dashboard/'
     | '/dashboard/articles/$articleId'
     | '/dashboard/manage/articles'
     | '/dashboard/manage/users'
@@ -192,11 +192,11 @@ export interface FileRouteTypes {
     | '/auth/profile'
     | '/auth/sign-in'
     | '/auth/sign-up'
-    | '/dashboard/main'
     | '/dashboard/my-articles'
     | '/dashboard/reviews'
     | '/dashboard/submit'
     | '/articles'
+    | '/dashboard'
     | '/dashboard/articles/$articleId'
     | '/dashboard/manage/articles'
     | '/dashboard/manage/users'
@@ -210,11 +210,11 @@ export interface FileRouteTypes {
     | '/auth/profile'
     | '/auth/sign-in'
     | '/auth/sign-up'
-    | '/dashboard/main'
     | '/dashboard/my-articles'
     | '/dashboard/reviews'
     | '/dashboard/submit'
     | '/articles/'
+    | '/dashboard/'
     | '/dashboard/articles/$articleId'
     | '/dashboard/manage/articles'
     | '/dashboard/manage/users'
@@ -229,11 +229,11 @@ export interface RootRouteChildren {
   AuthProfileRoute: typeof AuthProfileRoute
   AuthSignInRoute: typeof AuthSignInRoute
   AuthSignUpRoute: typeof AuthSignUpRoute
-  DashboardMainRoute: typeof DashboardMainRoute
   DashboardMyArticlesRoute: typeof DashboardMyArticlesRoute
   DashboardReviewsRoute: typeof DashboardReviewsRoute
   DashboardSubmitRoute: typeof DashboardSubmitRoute
   ArticlesIndexRoute: typeof ArticlesIndexRoute
+  DashboardIndexRoute: typeof DashboardIndexRoute
   DashboardArticlesArticleIdRoute: typeof DashboardArticlesArticleIdRoute
   DashboardManageArticlesRoute: typeof DashboardManageArticlesRoute
   DashboardManageUsersRoute: typeof DashboardManageUsersRoute
@@ -269,6 +269,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/dashboard/': {
+      id: '/dashboard/'
+      path: '/dashboard'
+      fullPath: '/dashboard/'
+      preLoaderRoute: typeof DashboardIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/articles/': {
       id: '/articles/'
       path: '/articles'
@@ -295,13 +302,6 @@ declare module '@tanstack/react-router' {
       path: '/dashboard/my-articles'
       fullPath: '/dashboard/my-articles'
       preLoaderRoute: typeof DashboardMyArticlesRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/dashboard/main': {
-      id: '/dashboard/main'
-      path: '/dashboard/main'
-      fullPath: '/dashboard/main'
-      preLoaderRoute: typeof DashboardMainRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/auth/sign-up': {
@@ -365,11 +365,11 @@ const rootRouteChildren: RootRouteChildren = {
   AuthProfileRoute: AuthProfileRoute,
   AuthSignInRoute: AuthSignInRoute,
   AuthSignUpRoute: AuthSignUpRoute,
-  DashboardMainRoute: DashboardMainRoute,
   DashboardMyArticlesRoute: DashboardMyArticlesRoute,
   DashboardReviewsRoute: DashboardReviewsRoute,
   DashboardSubmitRoute: DashboardSubmitRoute,
   ArticlesIndexRoute: ArticlesIndexRoute,
+  DashboardIndexRoute: DashboardIndexRoute,
   DashboardArticlesArticleIdRoute: DashboardArticlesArticleIdRoute,
   DashboardManageArticlesRoute: DashboardManageArticlesRoute,
   DashboardManageUsersRoute: DashboardManageUsersRoute,

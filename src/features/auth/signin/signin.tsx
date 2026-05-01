@@ -1,18 +1,32 @@
-import { Mail, Lock,  BookOpen, ArrowRight } from 'lucide-react';
+import { useForm } from 'react-hook-form';
+import { Mail, Lock, BookOpen, ArrowRight, Loader2 } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent } from "@/components/ui/card";
 import { Link } from '@tanstack/react-router';
+import { useLogin, type LoginData } from './hooks/use-login';
 
 export const SignIn = () => {
+  const { mutateAsync, isPending } = useLogin();
+  
+  const { register, handleSubmit } = useForm({
+    defaultValues: {
+      email: '',
+      password: ''
+    }
+  });
+
+  const onSubmit = async (data: LoginData) => {
+    await mutateAsync(data);
+  };
+
   return (
     <div className="min-h-screen flex items-center justify-center bg-slate-50 p-4 selection:bg-indigo-100">
       <Card className="w-full max-w-5xl bg-white rounded-[32px] overflow-hidden shadow-2xl border-none flex flex-col md:flex-row min-h-[650px] py-0">
         
-        {/* Visual Side (Left) */}
+        {/* Visual Side (Left) - Unchanged */}
         <div className="md:w-1/2 bg-gradient-to-br from-indigo-600 via-indigo-700 to-violet-800 p-12 text-white flex flex-col justify-between relative overflow-hidden">
-          {/* Subtle Decorative Circles */}
           <div className="absolute -top-24 -left-24 w-64 h-64 bg-white/10 rounded-full blur-3xl" />
           <div className="absolute -bottom-24 -right-24 w-64 h-64 bg-indigo-500/20 rounded-full blur-3xl" />
           
@@ -38,7 +52,7 @@ export const SignIn = () => {
               "SciFlow a transformé notre flux de travail. La transparence du cycle de vie des articles est un atout majeur pour nos chercheurs."
             </p>
             <div className="mt-6 flex items-center gap-3">
-              <div className="h-10 w-10 rounded-full bg-indigo-400/30 border border-white/20" />
+              <img src="/woman.webp" alt="Profile" className="h-10 w-10 rounded-full object-cover" />
               <div>
                 <p className="font-bold text-sm text-white">Dr. Sarah Chen</p>
                 <p className="text-xs text-indigo-200/70 uppercase tracking-widest font-semibold">Directrice de recherche, MIT</p>
@@ -55,12 +69,14 @@ export const SignIn = () => {
               <p className="text-slate-500 mt-2 font-medium">Entrez vos identifiants pour accéder à votre espace.</p>
             </div>
             
-            <form className="space-y-5" onSubmit={(e) => e.preventDefault()}>
+            <form className="space-y-5" onSubmit={handleSubmit(onSubmit)}>
+              {/* Email Field */}
               <div className="space-y-2">
                 <Label htmlFor="email" className="text-slate-700 font-bold ml-1">Email académique</Label>
                 <div className="relative group">
                   <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-indigo-600 transition-colors" size={18} />
                   <Input 
+                    {...register('email', { required: true })}
                     id="email"
                     type="email" 
                     placeholder="nom@universite.fr" 
@@ -69,14 +85,13 @@ export const SignIn = () => {
                 </div>
               </div>
 
+              {/* Password Field */}
               <div className="space-y-2">
-                {/* <div className="flex justify-between items-center ml-1">
-                  <Label htmlFor="pass" className="text-slate-700 font-bold">Mot de passe</Label>
-                  <a href="#" className="text-xs font-semibold text-indigo-600 hover:text-indigo-700 transition">Oublié ?</a>
-                </div> */}
+                <Label htmlFor="pass" className="text-slate-700 font-bold ml-1">Mot de passe</Label>
                 <div className="relative group">
                   <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-indigo-600 transition-colors" size={18} />
                   <Input 
+                    {...register('password', { required: true })}
                     id="pass"
                     type="password" 
                     placeholder="••••••••" 
@@ -85,9 +100,19 @@ export const SignIn = () => {
                 </div>
               </div>
 
-              <Button className="w-full h-12 rounded-2xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-base transition-all shadow-xl shadow-indigo-100 group">
-                Se connecter
-                <ArrowRight size={18} className="ml-2 group-hover:translate-x-1 transition-transform" />
+              <Button 
+                type="submit" 
+                disabled={isPending}
+                className="w-full h-12 rounded-2xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-base transition-all shadow-xl shadow-indigo-100 group"
+              >
+                {isPending ? (
+                  <Loader2 className="animate-spin h-5 w-5" />
+                ) : (
+                  <>
+                    Se connecter
+                    <ArrowRight size={18} className="ml-2 group-hover:translate-x-1 transition-transform" />
+                  </>
+                )}
               </Button>
             </form>
             

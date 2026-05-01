@@ -1,45 +1,42 @@
 import { apiClient } from '@/api/client';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { useToast } from '../use-toast';
-import { useUserStore } from '@/store/user';
+import { useToast } from '@/hooks/use-toast';
+import type { User } from '@/types/user';
 
-interface SignUpResponse {
-    accessToken: string;
-    user: any;
+export interface SignUpResponse {
+    user: User;
+    access_token: string;
 }
 
-interface SignUpData {
+export interface SignUpData {
+    name: string;
     email: string;
     password: string;
-    entreprise_name: string;
-    phone_number: string;
-    full_name: string;
-    source: string;
+    role: 'admin' | 'editor' | 'reviewer' | 'author' | 'reader';
+    profile_picture: string;
 }
 
 export function useSignUp() {
     const { toast } = useToast();
     const queryClient = useQueryClient();
-    const { clearUser } = useUserStore();
 
     return useMutation({
         mutationFn: async (data: SignUpData): Promise<SignUpResponse> => {
-            return await apiClient.post<SignUpData, SignUpResponse>('/users/enterprisesignup', data);
+            return await apiClient.post<SignUpData, SignUpResponse>('/register', data);
         },
-        onSuccess: ({ accessToken }) => {
+        onSuccess: ({ access_token }) => {
             toast({
                 title: 'Success',
                 description: 'Operation succeeded',
                 duration: 2000,
                 variant: 'success'
             });
-            localStorage.setItem("token", accessToken);
+            localStorage.setItem("token", access_token);
 
             queryClient.invalidateQueries({
                 queryKey: ['user']
             });
-            clearUser();
-            location.href = '/onboarding'
+            location.href = '/dashboard';
         },
     });
 }
