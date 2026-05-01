@@ -113,7 +113,7 @@ export function ArticleDetails() {
               </div>
             </Button>
             {article.file_path && (
-              <Button size="sm" className="cursor-pointer gap-2 rounded-xl bg-indigo-600 text-white font-bold shadow-lg shadow-indigo-100">
+              <Button onClick={() => window.open(article.file_path || '', '_blank')} size="sm" className="cursor-pointer gap-2 rounded-xl bg-indigo-600 text-white font-bold shadow-lg shadow-indigo-100">
                 <Download size={16} /> PDF
               </Button>
             )}

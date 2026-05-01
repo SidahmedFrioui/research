@@ -163,7 +163,7 @@ export function ArticlesList() {
                   )}
 
                   {/* SEUL l'Admin peut valider la décision finale */}
-                  {user?.role === 'admin' && article.status === 'under_review' && (
+                  {user?.role === 'admin' && (
                     <Button onClick={() => router.navigate({ to: '/dashboard/reviews', search: { articleId: article.id } })} className="bg-emerald-600 text-white">
                       Voir Décisions
                     </Button>

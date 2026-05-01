@@ -57,3 +57,28 @@ export function useCreateAIReview({ id }: { id: string }) {
     },
   });
 }
+
+export function useValidate() {
+  const { toast } = useToast();
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (articleId: number): Promise<AIReviewData> => {
+      return await apiClient.put<{}, AIReviewData>(`/articles/${articleId}/status`, {
+        status: "submitted"
+      });
+    },
+    onSuccess: () => {
+      toast({
+        title: 'Success',
+        description: 'Article validated successfully',
+        duration: 2000,
+        variant: 'success'
+      });
+
+      queryClient.invalidateQueries({
+        queryKey: ['articles']
+      });
+    },
+  });
+}

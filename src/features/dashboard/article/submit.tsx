@@ -1,7 +1,8 @@
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { 
   FileUp, Info, Loader2, 
-  ArrowRight, ShieldCheck, FileText 
+  ArrowRight, FileText, CheckCircle2, X 
 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -13,21 +14,52 @@ import { Badge } from "@/components/ui/badge";
 
 import type { Article } from '#/types/article';
 import { useCreateArticle } from "./hooks/mutations/article";
+import { uploadToSupabase } from "#/integrations/supabase";
 
 type SubmitFormData = Pick<Article, 'title' | 'abstract' | 'file_path'>;
 
 export const SubmitArticle = () => {
-  const { mutate: createArticle, isPending } = useCreateArticle();
+  const [file, setFile] = useState<File | null>(null);
+  const [isUploading, setIsUploading] = useState(false);
   
-  const { register, handleSubmit, reset, formState: { errors } } = useForm<SubmitFormData>({
-    defaultValues: { title: "", abstract: "", file_path: null }
+  const { mutate: createArticle, isPending: isMutationPending } = useCreateArticle();
+  
+  const { register, handleSubmit, reset } = useForm<SubmitFormData>({
+    defaultValues: { title: "", abstract: "", file_path: "" }
   });
 
-  const onSubmit = (data: SubmitFormData) => {
-    createArticle(data, {
-      onSuccess: () => reset()
-    });
+  const onSubmit = async (data: SubmitFormData) => {
+    try {
+      let finalFilePath = data.file_path;
+
+      // 1. If a local file is selected, upload it first
+      if (file) {
+        setIsUploading(true);
+        const publicUrl = await uploadToSupabase(file, 'manuscripts');
+        finalFilePath = publicUrl;
+      }
+
+      // 2. Trigger the creation mutation with the Supabase URL
+      createArticle({ ...data, file_path: finalFilePath }, {
+        onSuccess: () => {
+          reset();
+          setFile(null);
+        },
+        onSettled: () => setIsUploading(false)
+      });
+    } catch (error) {
+      console.error(error);
+      setIsUploading(false);
+    }
   };
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      setFile(e.target.files[0]);
+    }
+  };
+
+  const isPending = isMutationPending || isUploading;
 
   return (
     <div className="min-h-screen bg-[#F8FAFC] pb-20">
@@ -45,17 +77,12 @@ export const SubmitArticle = () => {
           <h1 className="text-4xl font-black tracking-tighter text-slate-900 md:text-5xl">
             Soumettre un <span className="text-indigo-600">Article.</span>
           </h1>
-          <p className="text-slate-500 mt-4 max-w-2xl text-lg font-medium leading-relaxed">
-            Partagez vos recherches avec la communauté. Une fois envoyé, notre équipe 
-            <span className="text-slate-900 font-bold"> vérifiera votre contenu</span> pour validation et publication.
-          </p>
         </div>
       </div>
 
       <main className="max-w-7xl mx-auto px-6">
         <form onSubmit={handleSubmit(onSubmit)} className="grid grid-cols-12 gap-8">
           
-          {/* Main Form */}
           <div className="col-span-12 lg:col-span-8 space-y-8">
             <Card className="border-slate-100 shadow-sm rounded-[2rem] overflow-hidden">
               <CardHeader className="border-b border-slate-50 bg-white p-8">
@@ -64,40 +91,69 @@ export const SubmitArticle = () => {
                 </CardTitle>
               </CardHeader>
               <CardContent className="p-8 space-y-8">
+                {/* Title Input */}
                 <div className="space-y-3">
-                  <Label className="text-xs font-black text-slate-400 uppercase tracking-widest">
-                    Titre de l'article
-                  </Label>
+                  <Label className="text-xs font-black text-slate-400 uppercase tracking-widest">Titre</Label>
                   <Input 
-                    {...register("title", { required: "Veuillez donner un titre à votre travail" })}
-                    placeholder="Entrez le titre complet..." 
-                    className="h-14 border-slate-200 rounded-2xl focus:ring-indigo-600 text-lg font-bold tracking-tight"
+                    {...register("title", { required: "Titre requis" })}
+                    placeholder="Entrez le titre..." 
+                    className="h-14 border-slate-200 rounded-2xl text-lg font-bold"
                   />
-                  {errors.title && <p className="text-red-500 text-xs font-bold">{errors.title.message}</p>}
                 </div>
 
+                {/* Abstract Input */}
                 <div className="space-y-3">
-                  <Label className="text-xs font-black text-slate-400 uppercase tracking-widest">
-                    Résumé des travaux
-                  </Label>
+                  <Label className="text-xs font-black text-slate-400 uppercase tracking-widest">Résumé</Label>
                   <Textarea 
-                    {...register("abstract", { required: "Un court résumé est nécessaire" })}
-                    placeholder="Décrivez brièvement vos recherches et vos conclusions..." 
-                    className="min-h-[250px] border-slate-200 rounded-[1.5rem] focus:ring-indigo-600 leading-relaxed text-slate-600"
+                    {...register("abstract", { required: "Résumé requis" })}
+                    placeholder="Décrivez vos recherches..." 
+                    className="min-h-[200px] border-slate-200 rounded-[1.5rem]"
                   />
-                  {errors.abstract && <p className="text-red-500 text-xs font-bold">{errors.abstract.message}</p>}
                 </div>
 
+                {/* FILE UPLOAD ZONE */}
                 <div className="space-y-3">
                   <Label className="text-xs font-black text-slate-400 uppercase tracking-widest">
-                    Lien vers le document complet
+                    Manuscrit (PDF, DOCX)
                   </Label>
-                  <div className="relative">
-                    <FileText className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-300" size={20} />
+                  
+                  {!file ? (
+                    <label className="flex flex-col items-center justify-center w-full h-40 border-2 border-dashed border-slate-200 rounded-[1.5rem] bg-slate-50/50 hover:bg-slate-50 transition-colors cursor-pointer group">
+                      <div className="flex flex-col items-center justify-center pt-5 pb-6">
+                        <FileUp className="text-slate-300 group-hover:text-indigo-500 transition-colors mb-2" size={32} />
+                        <p className="text-sm font-bold text-slate-500">Cliquez pour téléverser votre fichier</p>
+                        <p className="text-[10px] text-slate-400 uppercase tracking-widest mt-1">Format PDF privilégié</p>
+                      </div>
+                      <input type="file" className="hidden" onChange={handleFileChange} accept=".pdf,.doc,.docx" />
+                    </label>
+                  ) : (
+                    <div className="flex items-center justify-between p-6 border border-indigo-100 bg-indigo-50/30 rounded-[1.5rem] animate-in fade-in zoom-in duration-300">
+                      <div className="flex items-center gap-4">
+                        <div className="h-12 w-12 bg-white rounded-xl flex items-center justify-center text-indigo-600 shadow-sm">
+                          <FileText size={24} />
+                        </div>
+                        <div>
+                          <p className="text-sm font-black text-slate-900 truncate max-w-[200px] md:max-w-md">{file.name}</p>
+                          <p className="text-[10px] font-bold text-indigo-600 uppercase">Prêt pour l'envoi</p>
+                        </div>
+                      </div>
+                      <Button 
+                        type="button" 
+                        variant="ghost" 
+                        onClick={() => setFile(null)}
+                        className="h-10 w-10 p-0 rounded-full hover:bg-white text-slate-400 hover:text-red-500"
+                      >
+                        <X size={20} />
+                      </Button>
+                    </div>
+                  )}
+
+                  <div className="flex items-center gap-2 mt-4 px-2">
+                    <span className="text-[10px] font-black text-slate-300 uppercase tracking-tighter">Ou lien externe :</span>
                     <Input 
                       {...register("file_path")}
-                      placeholder="Lien Dropbox, Drive ou serveur..." 
-                      className="pl-12 h-14 border-slate-200 rounded-2xl"
+                      placeholder="https://..." 
+                      className="h-8 border-none bg-transparent text-xs text-indigo-600 focus-visible:ring-0 p-0"
                     />
                   </div>
                 </div>
@@ -105,46 +161,41 @@ export const SubmitArticle = () => {
             </Card>
           </div>
 
-          {/* Sidebar */}
+          {/* Sidebar Area */}
           <div className="col-span-12 lg:col-span-4 space-y-6">
             <div className="bg-white rounded-[2rem] border border-slate-100 p-8 shadow-sm">
               <h4 className="text-slate-900 font-black uppercase tracking-widest text-xs mb-6 flex items-center gap-2">
-                <ShieldCheck className="text-emerald-500" size={18} /> Prochaines étapes
+                <CheckCircle2 className="text-emerald-500" size={18} /> Statut du transfert
               </h4>
-              <ul className="space-y-6">
-                {[
-                  "Réception de votre document",
-                  "Vérification par nos modérateurs",
-                  "Validation de la conformité",
-                  "Mise en ligne officielle"
-                ].map((item, i) => (
-                  <li key={i} className="flex items-center gap-4 text-sm text-slate-600 font-bold">
-                    <div className="h-6 w-6 rounded-full bg-slate-50 flex items-center justify-center text-[10px] text-slate-400 border border-slate-100">
-                      {i + 1}
-                    </div>
-                    {item}
-                  </li>
-                ))}
-              </ul>
+              <div className="space-y-4">
+                 <div className="flex justify-between items-center text-xs font-bold">
+                    <span className="text-slate-400">Fichier sélectionné</span>
+                    <span className={file ? "text-emerald-600" : "text-slate-300"}>{file ? "OUI" : "NON"}</span>
+                 </div>
+                 <div className="flex justify-between items-center text-xs font-bold">
+                    <span className="text-slate-400">Upload Supabase</span>
+                    <span className={isUploading ? "text-indigo-600 animate-pulse" : "text-slate-300"}>
+                      {isUploading ? "EN COURS..." : "ATTENTE"}
+                    </span>
+                 </div>
+              </div>
             </div>
 
             <div className="sticky top-24">
               <Button 
                 type="submit" 
-                disabled={isPending}
-                className="w-full h-20 bg-indigo-600 hover:bg-indigo-700 text-white rounded-[1.5rem] shadow-2xl shadow-indigo-500/20 font-black uppercase tracking-[2px] text-sm transition-all flex items-center justify-center gap-3"
+                disabled={isPending || (!file && !register('file_path'))}
+                className="w-full h-20 bg-indigo-600 hover:bg-indigo-700 text-white rounded-[1.5rem] shadow-2xl shadow-indigo-500/20 font-black uppercase tracking-[2px] text-sm transition-all flex items-center justify-center gap-3 disabled:opacity-50"
               >
                 {isPending ? (
-                  <Loader2 className="animate-spin" size={24} />
+                  <div className="flex items-center gap-3">
+                    <Loader2 className="animate-spin" size={24} />
+                    <span>{isUploading ? "Transfert fichier..." : "Envoi article..."}</span>
+                  </div>
                 ) : (
-                  <>
-                    Envoyer pour approbation <ArrowRight size={20} />
-                  </>
+                  <>Soumettre le manuscrit <ArrowRight size={20} /></>
                 )}
               </Button>
-              <p className="text-[10px] text-center text-slate-400 mt-6 font-bold uppercase tracking-wider leading-relaxed">
-                Notre équipe reviendra vers vous rapidement après vérification de votre manuscrit.
-              </p>
             </div>
           </div>
         </form>
