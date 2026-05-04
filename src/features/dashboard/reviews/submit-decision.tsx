@@ -1,5 +1,5 @@
 import * as React from "react";
-import { useSearch } from "@tanstack/react-router";
+import { useRouter, useSearch } from "@tanstack/react-router";
 import { 
   FileCheck, AlertTriangle, XCircle, 
   MessageSquare, Send, ArrowLeft, Loader2,
@@ -18,6 +18,7 @@ type DecisionType = 'accepted' | 'rejected' | 'major_revision' | 'minor_revision
 
 export function SubmitDecision() {
   const search = useSearch({ from: '/dashboard/submit-decision' });
+  const router = useRouter();
   const reviewId = (search as any).reviewId;
   const articleId = (search as any).articleId; // Ensure articleId is passed in search params
 
@@ -46,6 +47,7 @@ export function SubmitDecision() {
       decision: decision,
       comments: comment,
     });
+    router.navigate({ to: '/dashboard/assigned-articles' });
   };
 
   const decisions: { id: DecisionType; label: string; icon: any; color: string; hover: string }[] = [

@@ -25,10 +25,13 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { useMakeReviewer, useMakeEditor } from "./hooks/mutations/review";
 
 export function Users() {
   const [searchQuery, setSearchQuery] = useState("");
   const { data, isPending, isError } = useGetUsers();
+  const { mutate: makeReviewer } = useMakeReviewer();
+  const { mutate: makeEditor } = useMakeEditor();
 
   const users = Array.isArray(data) ? data : [];
 
@@ -142,12 +145,33 @@ export function Users() {
                         <MoreHorizontal size={18} />
                       </Button>
                     </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end" className="w-48 rounded-lg shadow-xl border-slate-200">
-                      <DropdownMenuLabel className="text-xs text-slate-400">Options de contrôle</DropdownMenuLabel>
+                    <DropdownMenuContent align="end" className="w-56 rounded-lg shadow-xl border-slate-200">
+                      <DropdownMenuLabel className="text-[10px] uppercase font-bold text-slate-400 tracking-wider">
+                        Modifier les accès
+                      </DropdownMenuLabel>
                       <DropdownMenuSeparator />
-                      <DropdownMenuItem className="gap-2 text-sm font-semibold cursor-pointer">
-                        <Shield size={14} className="text-slate-400" /> Changer le rôle
+                      
+                      {/* Promote to Editor */}
+                      <DropdownMenuItem 
+                        disabled={user.role === 'editor'}
+                        onClick={() => makeEditor({userId: user.id})}
+                        className="gap-2 text-sm font-semibold cursor-pointer focus:bg-indigo-50 focus:text-indigo-600"
+                      >
+                        <Shield size={14} className={user.role === 'editor' ? "text-slate-300" : "text-indigo-500"} /> 
+                        Définir comme Éditeur
                       </DropdownMenuItem>
+
+                      {/* Promote to Reviewer */}
+                      <DropdownMenuItem 
+                        disabled={user.role === 'reviewer'}
+                        onClick={() => makeReviewer({userId: user.id})}
+                        className="gap-2 text-sm font-semibold cursor-pointer focus:bg-amber-50 focus:text-amber-600"
+                      >
+                        <Shield size={14} className={user.role === 'reviewer' ? "text-slate-300" : "text-amber-500"} /> 
+                        Définir comme Reviewer
+                      </DropdownMenuItem>
+
+                      <DropdownMenuSeparator />
                     </DropdownMenuContent>
                   </DropdownMenu>
                 </TableCell>

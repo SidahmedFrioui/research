@@ -107,21 +107,21 @@ export function MyReviews() {
                     </TableCell>
 
                     <TableCell>
-                      <Badge variant="outline" className={cn(
+                      {review.comments ? <Badge variant="outline" className={cn(
                         "px-3 py-1 rounded-xl text-[10px] font-black uppercase tracking-tight border shadow-sm",
                         getRecommendationStyle(review.comments || '')
                       )}>
                         {review.comments?.replace('_', ' ')}
-                      </Badge>
+                      </Badge> : <span className="text-slate-400">-</span>}
                     </TableCell>
 
                     <TableCell>
-                      <Badge variant="outline" className={cn(
+                      {review.decision ? <Badge variant="outline" className={cn(
                         "px-3 py-1 rounded-xl text-[10px] font-black uppercase tracking-tight border shadow-sm",
                         getRecommendationStyle(review.decision || '')
                       )}>
                         {review.decision?.replace('_', ' ')}
-                      </Badge>
+                      </Badge> : <span className="text-slate-400">-</span>}
                     </TableCell>
 
                     <TableCell>

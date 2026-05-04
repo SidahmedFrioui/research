@@ -138,10 +138,8 @@ export const SignUp = () => {
                     <SelectValue placeholder="Choisir un rôle" />
                   </SelectTrigger>
                   <SelectContent className="bg-white text-gray-900 rounded-xl border-slate-200">
-                    <SelectItem value="admin">Administrateur</SelectItem>
-                    <SelectItem value="editor">Éditeur</SelectItem>
-                    <SelectItem value="reviewer">Reviewer</SelectItem>
                     <SelectItem value="author">Auteur</SelectItem>
+                    <SelectItem value="reader">Lecteur</SelectItem>
                   </SelectContent>
                 </Select>
               </div>

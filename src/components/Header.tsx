@@ -92,10 +92,12 @@ export default function Header() {
                 <DropdownMenuLabel className="px-3 py-2 text-xs font-semibold text-slate-400 uppercase tracking-wider">
                   Navigation
                 </DropdownMenuLabel>
-                <DropdownMenuItem onClick={() => router.navigate({ to: '/dashboard' })} className="rounded-xl cursor-pointer py-2.5 hover:bg-slate-100">
-                  <LayoutDashboard className="mr-2 h-4 w-4 text-slate-500" />
-                  <span>Tableau de bord</span>
-                </DropdownMenuItem>
+                {user?.role !== 'reader' && (
+                  <DropdownMenuItem onClick={() => router.navigate({ to: '/dashboard' })} className="rounded-xl cursor-pointer py-2.5 hover:bg-slate-100">
+                    <LayoutDashboard className="mr-2 h-4 w-4 text-slate-500" />
+                    <span>Tableau de bord</span>
+                  </DropdownMenuItem>
+                )}
                 <DropdownMenuItem onClick={() => router.navigate({ to: '/auth/profile' })} className="rounded-xl cursor-pointer py-2.5 hover:bg-slate-100">
                   <UserIcon className="mr-2 h-4 w-4 text-slate-500" />
                   <span>Profil</span>

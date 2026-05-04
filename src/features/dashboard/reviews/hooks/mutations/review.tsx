@@ -31,6 +31,15 @@ export function useCreateReview({ id }: { id: string }) {
       queryClient.invalidateQueries({
         queryKey: ['reviews', id]
       });
+      queryClient.invalidateQueries({
+        queryKey: ['articles']
+      });
+      queryClient.invalidateQueries({
+        queryKey: ['article']
+      });
+      queryClient.invalidateQueries({
+        queryKey: ['review']
+      });
     },
   });
 }
@@ -78,6 +87,15 @@ export function useValidate() {
 
       queryClient.invalidateQueries({
         queryKey: ['articles']
+      });
+      queryClient.invalidateQueries({
+        queryKey: ['article']
+      });
+      queryClient.invalidateQueries({
+        queryKey: ['article']
+      });
+      queryClient.invalidateQueries({
+        queryKey: ['review']
       });
     },
   });
